@@ -1,0 +1,147 @@
+﻿@page
+@model AddressModel
+@{
+    ViewData["Title"] = "Địa chỉ";
+    ViewData["ActivePage"] = ManageNavPages.Address;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div>
+        <div class="info-item-title mb-2">
+            <h3 class="d-inline me-4">Địa chỉ</h3>
+            <span id="btn-add"
+                  class="btn-icon text-secondary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#add-address-modal"><i class="fa-solid fa-plus"></i> Thêm</span>
+        </div>
+        @foreach (var address in Model.Addresses)
+        {
+            <form class="address-container" asp-page-handler="SetDefaultAddress">
+                <input name="addressId" value="@address.Id" type="hidden"/>
+                <div onclick="this.parentNode.submit(); return false;">
+                    @if (address.IsDefault)
+                    {
+                        <div class="mb-1 fw-bold border border-primary text-primary p-2"
+                             style="width: fit-content">
+                            Mặc định
+                        </div>
+                    }
+                    <div class="mb-1">
+                        <span class="text-secondary">Họ và tên:&emsp;</span>
+                        <span>@address.Name</span>
+                    </div>
+                    <div class="mb-1">
+                        <span class="text-secondary">Điện thoại liên hệ:&emsp;</span>
+                        <span>@address.PhoneNumber</span>
+                    </div>
+                    <div class="mb-1">
+                        <span class="text-secondary">Địa chỉ:&emsp;</span>
+                        <span>@address.Address</span>
+                    </div>
+                    <!-- <div class="btn-icon text-secondary">
+                        <form asp-page-handler="DeleteAddress" class="OKOKO">
+                            <input type="hidden" value="@address.Id" name="addressId" />
+                            <a onclick="console.log(this.parentNode); this.parentNode.submit(); return false;" class="link-secondary">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </form>
+                    </div> -->
+                </div>
+
+            </form>
+        }
+
+    </div>
+</div>
+
+<div id="add-address-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" method="post">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm địa chỉ mới</h5>
+            </div>
+            <div class="modal-body">
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               class="form-control"
+                               id="address-name"
+                               asp-for="Input.Name"
+                               required
+                               placeholder="" />
+                        <label for="profile-name" class="form-label">Họ và tên</label>
+                    <span asp-validation-for="Input.Name" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               asp-for="Input.PhoneNumber"
+                               required
+                               id="address-phone" />
+                        <label for="address-phone" class="form-label">Số điện thoại</label>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               placeholder=""
+                               class="form-control"
+                               asp-for="Input.HouseAddress"
+                               required
+                               id="address-house" />
+                        <label for="profile-phone" class="form-label">Địa chỉ nhà</label>
+                    <span asp-validation-for="Input.HouseAddress" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 row gx-1">
+                        <div class="col-4 form-floating">
+                            <select class="form-select"
+                                    asp-for="Input.CityAddress" required
+                                    id="select-cỉty">
+                            </select>
+                            <label for="select-city" class="form-label">Tỉnh / Thành phố</label>
+                        <span asp-validation-for="Input.CityAddress" class="text-danger" aria-required="true"></span>
+                        </div>
+                        <div class="col-4 form-floating">
+                            <select class="form-select"
+                                    asp-for="Input.DistrictAddress"
+                                    disabled required
+                                    id="select-district">
+                            </select>
+                            <label for="select-district"
+                                   class="form-label">Quận / Huyện</label>
+                        <span asp-validation-for="Input.DistrictAddress" class="text-danger" aria-required="true"></span>
+
+                        </div>
+                        <div class="col-4 form-floating">
+                            <select class="form-select" disabled required
+                                    asp-for="Input.WardAddress"
+                                    id="select-ward">
+                            </select>
+                            <label for="select-ward" class="form-label">Phường / Xã</label>
+                            <span asp-validation-for="Input.WardAddress" class="text-danger" aria-required="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               asp-for="Input.IsDefault"
+                               id="default-address-check" />
+                        <label class="form-check-label"
+                               for="default-address-check">
+                            Đặt làm địa chỉ mặc định
+                        </label>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <a class="link-dark" data-bs-dismiss="modal">Hủy</a>
+                <button type="submit" class="btn btn-dark">Thêm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/address.js"></script>
+
+}

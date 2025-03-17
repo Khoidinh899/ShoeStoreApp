@@ -1,0 +1,4 @@
+﻿namespace ShoeStoreApp.Adapter
+{
+
+}

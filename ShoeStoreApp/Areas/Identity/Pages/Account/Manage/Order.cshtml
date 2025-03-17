@@ -1,0 +1,113 @@
+﻿@page
+@using ShoeStoreApp.Models
+@using ShoeStoreApp.Utils
+@model OrderModel
+@{
+    ViewData["Title"] = "Đơn hàng";
+    ViewData["ActivePage"] = ManageNavPages.Order;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div>
+        <div class="info-item-title mb-2">
+            <h3 class="d-inline me-4">Đơn hàng</h3>
+        </div>
+        <div class="container mb-3 status-nav">
+            <div class="row text-center tab-container">
+                <a asp-route-statusCode="-1" class="col tab-item @(((int) ViewData["statusCode"] < 0 || (int) ViewData["statusCode"] > 3) ? "selected" : string.Empty)">TẤT CẢ</a>
+                <a asp-route-statusCode="@OrderStatusCode.SUCCESS" class="col tab-item @(((int) ViewData["statusCode"] == OrderStatusCode.SUCCESS) ? "selected" : string.Empty)">HOÀN THÀNH</a>
+                <a asp-route-statusCode="@OrderStatusCode.PENDING" class="col tab-item @(((int) ViewData["statusCode"] == OrderStatusCode.PENDING) ? "selected" : string.Empty)">CHỜ XÁC NHẬN</a>
+                <a asp-route-statusCode="@OrderStatusCode.DELIVERING" class="col tab-item @(((int) ViewData["statusCode"] == OrderStatusCode.DELIVERING) ? "selected" : string.Empty)">ĐANG VẬN CHUYỂN</a>
+                <a asp-route-statusCode="@OrderStatusCode.CANCELLED" class="col tab-item @(((int) ViewData["statusCode"] == OrderStatusCode.CANCELLED) ? "selected" : string.Empty)">ĐÃ HỦY</a>
+            </div>
+        </div>
+        @foreach (var order in Model.Orders)
+        {
+            <div class="order-item">
+                <div>
+                    MÃ ĐƠN HÀNG: @order.Id &emsp;| &emsp;
+                    @if (order.Status == OrderStatusCode.SUCCESS)
+                    {
+                        <span class="text-success">ĐƠN HÀNG ĐÃ HOÀN THÀNH</span>
+                    }
+                    else if (order.Status == OrderStatusCode.PENDING)
+                    {
+                        <span class="text-warning">ĐƠN HÀNG ĐANG CHỜ XÁC NHẬN</span>
+                    }
+                    else if (order.Status == OrderStatusCode.DELIVERING)
+                    {
+                        <span class="text-primary">ĐƠN HÀNG ĐANG VẬN CHUYỂN</span>
+                    }
+                    else if (order.Status == OrderStatusCode.CANCELLED)
+                    {
+                        <span class="text-danger">ĐƠN HÀNG ĐÃ BỊ HỦY</span>
+                    }
+                </div>
+                <hr />
+                <div class="cart-item-list-container">
+                    @foreach (var item in order.Items)
+                    {
+                        <div class="cart-item justify-content-start d-flex">
+                            <div class="img-container d-inline-block me-2">
+                                <img class="cart-item-img"
+                                     src="@item.ProductVariantItem.ProductVariant.ImgPath"
+                                     alt="" />
+                            </div>
+                            <div class="cart-item-info d-flex justify-content-between w-100">
+                                <div>
+                                    <div class="cart-item-title">
+                                        @item.ProductVariantItem.ProductVariant.Product.Name
+                                    </div>
+                                    <div class="text-secondary">@PropertyDisplayHelper.GetTextForColor(item.ProductVariantItem.ProductVariant.Color), @item.ProductVariantItem.Size</div>
+                                    <span class="quantity text-secondary">Số lượng: @item.Quantity</span>
+                                </div>
+
+                                <div class="price">@CurrencyFormat.Format(item.ProductVariantItem.ProductVariant.Product.Price * item.Quantity)</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <hr />
+                <div class="row gx-0 mt-2">
+                    <div class="col-6">
+                        <h5>Địa chỉ giao hàng</h5>
+                        <div>@order.DeliveryAddress.Name</div>
+                        <div class="text-secondary">@order.DeliveryAddress.PhoneNumber</div>
+                        <div class="text-secondary">
+                            @order.DeliveryAddress.Address
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row text-end">
+                            <div class="col-6">Tổng tiền hàng:</div>
+                            <div class="col-6">
+                                <span class="price ms-2">@CurrencyFormat.Format(order.ItemsTotal)</span>
+                            </div>
+                        </div>
+                        <div class="row text-end">
+                            <div class="col-6">Phí vận chuyển:</div>
+                            <div class="col-6">
+                                <span class="price ms-2">@CurrencyFormat.Format(order.DeliveryFee)</span>
+                            </div>
+                        </div>
+                        <div class="row text-end">
+                            <div class="col-6 fs-5"><b>Thành tiền:</b></div>
+                            <div class="col-6">
+                                <span class="total price ms-2">@CurrencyFormat.Format(order.Total)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/address.js"></script>
+
+}

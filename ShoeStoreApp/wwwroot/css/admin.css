@@ -1,0 +1,78 @@
+html, body {
+    height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+  }
+
+.sidebar i {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.sidebar .nav-link {
+    color: black;
+}
+
+.sidebar .nav-link.active {
+    background-color: black;
+}
+
+main {
+    margin-left: 80px;
+}
+
+.pagination {
+    margin-left: auto;
+}
+
+.pagination .page-link {
+    color: black !important;
+}
+
+.page-item.active .page-link {
+    color: white !important;
+    background-color: black !important;
+}
+
+table i {
+    color: gray
+}
+
+table i:hover {
+    cursor: pointer;
+    color: black;
+}
+
+table tr {
+    line-height: 32px;
+}
+
+table input {
+    margin-top: 8px !important;
+}
+
+.nav-option button {
+    width: fit-content;
+    padding: 0 16px;
+    margin-left: 10px;
+    text-wrap: nowrap;
+}
+
+.modal-dialog {
+    min-width: 700px;
+}
+
+.modal-body {
+    padding: 18px;
+}
+
+table a {
+    color: black;
+    text-decoration: none;
+}

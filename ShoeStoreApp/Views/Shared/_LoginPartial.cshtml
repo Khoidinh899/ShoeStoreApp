@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="dropdown nav-item">
+        <a id="manage" class="nav-link text-dark dropdown-toggle" title="Tài khoản" data-bs-toggle="dropdown" aria-expanded="false">Xin chào @UserManager.GetUserName(User)!</a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" asp-area ="Identity" asp-page="/Account/Manage/Index">Hồ sơ</a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="Cart">Giỏ hàng</a>
+            </li>
+            <li>
+                <a class="dropdown-item"  asp-area="Identity" asp-page="/Account/Manage/Order">Đơn hàng</a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark p-0">Đăng xuất</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+    <style>
+        #manage:hover {
+            cursor: pointer;
+        }
+    </style>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+    </li>
+}
+</ul>

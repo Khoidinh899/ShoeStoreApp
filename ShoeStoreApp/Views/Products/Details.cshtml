@@ -1,0 +1,109 @@
+﻿@using ShoeStoreApp.Utils
+@using ShoeStoreApp.Controllers;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model ProductsController.DetailModel
+
+@{
+    var translator = new VietnameseTranslator();
+}
+
+@section Styles {
+    <link href="@Url.Content("~/css/detail.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<!-- Main Container -->
+<div class="main-container container pt-3 h-100">
+    @if (!string.IsNullOrEmpty(Model.StatusMessage)) {
+        <div class="alert  @(Model.StatusMessage.StartsWith("Thành công") ? "alert-success" : "alert-danger") hide" id="success-alert" role="alert">
+            <div>
+                @Model.StatusMessage
+            </div>
+        </div>
+    }
+
+    <div class="m-3 mx-lg-5 mx-md-0">
+        <div class="row ">
+            <div class="col-lg-6">
+                <img id="main-img" src="@Model.Product.Variants.ElementAt(0).ImgPath" alt="" />
+            </div>
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-5">
+                <input type="hidden" id="productName" value="@Model.Product.Name">
+                <h2>@Model.Product.Name</h2>
+                <h6 class="card-text text-secondary">Giày @translator.Translate(Model.Product.Category) @translator.Translate(Model.Product.Gender)</h6>
+                <br />
+                <b class="price">@CurrencyFormat.Format(Model.Product.Price)</b>
+                <div class="mt-3">
+                    <h6>Màu sắc</h6>
+                    @for (var i = 0; i < Model.Product.Variants.Count; i++)
+                    {
+                        <div class="img-container me-1 @((i == 0) ? "selected" : string.Empty)">
+                            <img data-variantid="@Model.Product.Variants.ElementAt(i).Id" data-color="@Model.Product.Variants.ElementAt(i).Color}"
+                                 class="color-img"
+                                 src="@Model.Product.Variants.ElementAt(i).ImgPath"
+                                 alt="" />
+                        </div>
+                    }
+
+                </div>
+                @for (var i = 0; i < Model.Product.Variants.Count; i++)
+                {
+                    <div class="size-container mt-3 mb-1 @((i == 0) ? string.Empty : "hidden")" data-variantid="@Model.Product.Variants.ElementAt(i).Id">
+                        <h6>Kích cỡ</h6>
+                        @foreach (var item in Model.Product.Variants.ElementAt(i).Items)
+                        {
+                            <div class="size-card mb-2 @((item.StockQuantity <= 0) ? "disabled" : string.Empty)" data-itemid="@item.Id">
+                                <span>@item.Size</span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @foreach(var variant in Model.Product.Variants)
+                {
+                    <div>
+                        <div data-variantid="@variant.Id">
+                            @foreach (var item in variant.Items)
+                            {
+                                <span>
+                                    <span data-itemid="@item.Id" class="quantity-display hidden text-secondary">Số lượng trong kho: @item.StockQuantity</span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+                <form asp-controller="Cart" asp-action="AddToCart" asp-route-returnUrl="@Url.RouteUrl(ViewContext.RouteData.Values)">
+                    <input type="hidden" asp-for="CartItem.ProductVariantItemId" id="input-itemid" />
+                    <button class="btn btn-dark w-100 p-3 fs-5 mb-5 mt-3" type="submit">
+                        Thêm vào giỏ hàng
+                    </button>
+                </form>
+                <p>@Model.Product.Description</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Container -->
+
+<!-- Offcanvas-->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        ...
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js//detail.js"></script>
+}
+

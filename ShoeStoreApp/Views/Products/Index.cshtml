@@ -1,0 +1,342 @@
+﻿@using ShoeStoreApp.Utils
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model List<Product>
+
+@{
+    var translator = new VietnameseTranslator();
+    var filtered = ViewData["filtered"];
+    var search = ViewData["search"];
+    var category = ViewData["category"];
+    var sort = ViewData["sort"];
+    var gender = (string[]) ViewData["gender"];
+    var price = (string[]) ViewData["price"];
+    var brand = (string[]) ViewData["brand"];
+    var color = (string[]) ViewData["color"];
+
+}
+<!-- Main Container -->
+<div class="main-container container pt-3 h-100">
+    <div class="mb-3">
+        @if ((bool) filtered == false)
+        {
+            <h2>Tất cả sản phẩm</h2>
+        }
+        else
+        {
+            <h2>Kết quả tìm kiếm @(search != null ? "cho " + search : string.Empty) (@Model.Count)</h2>
+        }
+    </div>
+    <!-- List container -->
+    <div id="product-list-container">
+        <!-- filter sidebar -->
+        <form id="filter-sidebar"> 
+            <input type="hidden" name="search" value="@(search == null ? string.Empty : search)"/>
+            <!-- Category -->
+            <input type="hidden" name="category" id="category-input" value="@(category == null ? string.Empty : category)" />
+            <div class="filter-item">
+                <div class="mb-1">
+                    <a class="category-link @((bool) filtered == false ? "selected" : string.Empty)" asp-action="Index">Tất cả giày</a>
+                </div>
+                <div class="mb-1">
+                    <a href="" data-category="sneaker" class="category-link @(category != null && category.Equals("sneaker") ? "selected" : string.Empty)"
+                        >Giày sneaker</a>
+                </div>
+                <div class="mb-1">
+                    <a href="" data-category="basketball" class="category-link @(category != null && category.Equals("basketball") ? "selected" : string.Empty)"
+                       >Giày bóng rổ</a>
+                </div>
+                <div class="mb-1">
+                    <a href="" data-category="football" class="category-link @(category != null && category.Equals("football") ? "selected" : string.Empty)"
+                       >Giày bóng đá</a>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Sort -->
+            <input type="hidden" name="sort" id="sort-input" value="@(sort == null ? string.Empty : sort)" />
+            <div class="filter-item">
+                <div class="mb-1">
+                    <a href="" data-sort="price_asc" class="sort-link @(sort != null && sort.Equals("price_asc") ? "selected" : string.Empty)">Giá tăng dần</a>
+                </div>
+                <div class="mb-1">
+                    <a href="" data-sort="price_desc" class="sort-link @(sort != null && sort.Equals("price_desc") ? "selected" : string.Empty)">Giá giảm dần</a>
+                </div>
+            </div>
+
+
+            <!-- Gender -->
+            <div class="filter-item">
+                <hr />
+                <button class="btn btn-toggle border-0 collapsed"
+                    type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#gender-collapse"
+                        aria-expanded="@((gender != null) ? "true" : "false")">
+                    <h5>Giới tính</h5>
+                </button>
+                <div class="collapse @((gender != null) ? "show" : string.Empty)" id="gender-collapse">
+                    <div class="filter-group">
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="gender"
+                                   value="men"
+                                   checked="@(gender != null && gender.Contains("men"))"
+                                   id="gender-male" />
+                            <label class="form-check-label"
+                                   for="gender-male">Nam</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="gender"
+                                   checked="@(gender != null && gender.Contains("women"))"
+                                   value="women"
+                                   id="gender-female" />
+                            <label class="form-check-label"
+                                   for="gender-female">Nữ</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="gender"
+                                   checked="@(gender != null && gender.Contains("unisex"))"
+                                   value="unisex"
+                                   id="gender-unisex" />
+                            <label class="form-check-label"
+                                   for="gender-unisex">Unisex</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Brand -->
+            <div class="filter-item">
+                <hr />
+                <button class="btn btn-toggle border-0 collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#brand-collapse"
+                        aria-expanded="@((brand != null) ? "true" : "false")">
+
+                    <h5>Nhãn hiệu</h5>
+                </button>
+                <div class="collapse @((brand != null) ? "show" : string.Empty)" id="brand-collapse">
+                    <div class="filter-group">
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="brand"
+                                   checked="@(brand != null && brand.Contains("nike"))"
+                                   value="nike"
+                                   id="brand-nike" />
+                            <label class="form-check-label"
+                                   for="brand-nike">Nike</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="brand"
+                                   checked="@(brand != null && brand.Contains("adidas"))"
+                                   value="adidas"
+                                   id="brand-adidas" />
+                            <label class="form-check-label"
+                                   for="brand-adidas">Adidas</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="brand"
+                                   checked="@(brand != null && brand.Contains("puma"))"
+                                   value="puma"
+                                   id="brand-puma" />
+                            <label class="form-check-label"
+                                   for="brand-puma">Puma</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Color -->
+            <div class="filter-item">
+                <hr />
+                <button class="btn btn-toggle border-0 collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#color-collapse"
+                        aria-expanded="@((color != null) ? "true" : "false")">
+                    <h5>Màu sắc</h5>
+                </button>
+                <div class="collapse @((color != null) ? "show" : string.Empty)" id="color-collapse">
+                    <div class="filter-group">
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="black"
+                                   checked="@(color != null && color.Contains("black"))"
+                                   name="color"
+                                   id="color-black" />
+                            <label class="form-check-label"
+                                   for="color-black">Đen</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("white"))"
+                                   value="white"
+                                   id="color-white" />
+                            <label class="form-check-label"
+                                   for="color-white">Trắng</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("pink"))"
+                                   value="pink"
+                                   id="color-pink" />
+                            <label class="form-check-label"
+                                   for="color-pink">Hồng</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("blue"))"
+                                   value="blue"
+                                   id="color-blue" />
+                            <label class="form-check-label"
+                                   for="color-blue">Xanh dương</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("gray"))"
+                                   value="gray"
+                                   id="color-gray" />
+                            <label class="form-check-label"
+                                   for="color-gray">Xám</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("yellow"))"
+                                   value="yellow"
+                                   id="color-yellow" />
+                            <label class="form-check-label"
+                                   for="color-yellow">Vàng</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="color"
+                                   checked="@(color != null && color.Contains("green"))"
+                                   value="green"
+                                   id="color-green" />
+                            <label class="form-check-label"
+                                   for="color-green">Xanh lục</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Price -->
+            <div class="filter-item">
+                <hr />
+                <button class="btn btn-toggle border-0 collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#price-collapse"
+                        aria-expanded="@((price != null) ? "true" : "false")">
+                    <h5>Giá</h5>
+                </button>
+                <div class="collapse @((price != null) ? "show" : string.Empty)" id="price-collapse">
+                    <div class="filter-group">
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="0-1000000"
+                                   checked="@(price != null && price.Contains("0-1000000"))"
+                                   id="0-1000000"
+                                   name="price" />
+                            <label class="form-check-label" for="0-1000000">0 - 1,000,000đ</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="1000000-2000000"
+                                   checked="@(price != null && price.Contains("1000000-2000000"))"
+                                   id="1000000-2000000"
+                                   name="price" />
+                            <label class="form-check-label"
+                                   for="1000000-2000000">1,000,000đ - 2,000,000đ</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="2000000-5000000"
+                                   name="price"
+                                   checked="@(price != null && price.Contains("2000000-5000000"))"
+                                   id="2000000-5000000" />
+                            <label class="form-check-label"
+                                   for="2000000-5000000">2,000,000đ - 5,000,000đ</label>
+                        </div>
+                        <div class="mt-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="5000000"
+                                   checked="@(price != null && price.Contains("5000000"))"
+                                   name="price"
+                                   id="5000000" />
+                            <label class="form-check-label" for="5000000">
+                                &gt; 5,000,000đ
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <button class="btn btn-dark w-100 mt-3" type="submit">
+                Lọc
+            </button>
+        </form>
+        <!-- filter sidebar -->
+        <!-- Product list -->
+        <div id="product-list" class="container">
+            <div class="row gy-3">
+                <!-- Product -->
+                @foreach(var product in Model)
+                {
+                    <a class="card col-md-6 col-lg-4" asp-action="Details" asp-route-id="@product.Id">
+                        <div class="card-img-top">
+                            <img class="display-img"
+                                 src="@product.Variants.ElementAt(0).ImgPath"
+                                 data-originalimg="@product.Variants.ElementAt(0).ImgPath"
+                                 alt="..." />
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <div class="card-text text-secondary">Giày @translator.Translate(product.Category) @translator.Translate(product.Gender)</div>
+                            <div class="card-text text-secondary">@product.Variants.Count màu</div>
+                            <div class="color-container">
+                                @foreach(var c in product.Variants)
+                                {
+                                    <div class="img-container hidden variant">
+                                        <img src="@c.ImgPath" alt="">
+                                    </div>
+                                }
+                            </div>
+                            <b class="card-text price">@CurrencyFormat.Format(product.Price)</b>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+        <!-- Product list -->
+    </div>
+</div>
+<!-- Main Container -->

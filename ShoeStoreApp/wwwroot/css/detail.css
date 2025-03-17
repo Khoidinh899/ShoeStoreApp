@@ -1,0 +1,54 @@
+.size-card {
+    border: solid 1px lightgray;
+    border-radius: 2px;
+    text-align: center;
+    margin-right: 4px;
+    display: inline-block;
+    padding: 5px;
+    width: 65px;
+}
+
+.size-card:hover {
+    cursor: pointer;
+    border-color: black;
+}
+
+.selected {
+    border: 1px solid black;
+}
+
+.size-card.disabled {
+    color: lightgray;
+    background-color: rgb(240, 240, 240);
+}
+
+.img-container {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.color-img {
+    width: 100%;
+    position: absolute;
+    top: -9999px;
+    bottom: -9999px;
+    left: -9999px;
+    right: -9999px;
+    margin: auto;
+}
+
+.img-container:hover {
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+.hidden {
+    display: none;
+}
+
+#main-img {
+    width: 100%;
+}

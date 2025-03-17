@@ -1,0 +1,162 @@
+﻿@using ShoeStoreApp.Controllers
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+@model CheckoutController.CheckoutModel
+
+@{
+    var translator = new VietnameseTranslator();
+}
+
+
+@section Styles {
+    <link href="@Url.Content("~/css/address.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/css/cart.css")" rel="stylesheet" type="text/css" />
+}
+<!-- Main Container -->
+<div class="main-container container pt-3 h-100">
+    <div class="row">
+        <div class="col-8">
+            <h2 class="mb-3">Thông tin giao hàng</h2>
+            <div class="mb-3 form-floating">
+                <select
+                    id="select-address"
+                       class="form-control"
+                       placeholder="">
+                    @foreach (var address in Model.DeliveryAddresses)
+                    {
+                        if (address.IsDefault)
+                        {
+                            <option value="@address.Id" selected>@address.Name • @address.PhoneNumber • @address.Address (mặc định)</option>
+                        }
+                        else
+                        {
+                            <option value="@address.Id">@address.Name • @address.PhoneNumber • @address.Address</option>
+                        }
+                    }
+                    <option value="new">Sử dụng địa chỉ mới</option>
+                </select>
+                <label for="profile-name" class="form-label">Chọn địa chỉ giao hàng</label>
+            </div>
+            <form asp-action="CheckoutWithNewAddress" class="d-none" id="form-new-address">
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               class="form-control"
+                               id="address-name"
+                               asp-for="Input.Name"
+                               required
+                               placeholder="" />
+                        <label for="profile-name" class="form-label">Họ và tên</label>
+                        <span asp-validation-for="Input.Name" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               asp-for="Input.PhoneNumber"
+                               required
+                               id="address-phone" />
+                        <label for="address-phone" class="form-label">Số điện thoại</label>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                               placeholder=""
+                               class="form-control"
+                               asp-for="Input.HouseAddress"
+                               required
+                               id="address-house" />
+                        <label for="profile-phone" class="form-label">Địa chỉ nhà</label>
+                        <span asp-validation-for="Input.HouseAddress" class="text-danger" aria-required="true"></span>
+                    </div>
+                    <div class="mb-3 row gx-1">
+                        <div class="col-4 form-floating">
+                            <select class="form-select"
+                                    asp-for="Input.CityAddress" required
+                                    id="select-cỉty">
+                            </select>
+                            <label for="select-city" class="form-label">Tỉnh / Thành phố</label>
+                            <span asp-validation-for="Input.CityAddress" class="text-danger" aria-required="true"></span>
+                        </div>
+                        <div class="col-4 form-floating">
+                            <select class="form-select"
+                                    asp-for="Input.DistrictAddress"
+                                    disabled required
+                                    id="select-district">
+                            </select>
+                            <label for="select-district"
+                                   class="form-label">Quận / Huyện</label>
+                            <span asp-validation-for="Input.DistrictAddress" class="text-danger" aria-required="true"></span>
+
+                        </div>
+                        <div class="col-4 form-floating">
+                            <select class="form-select" disabled required
+                                    asp-for="Input.WardAddress"
+                                    id="select-ward">
+                            </select>
+                            <label for="select-ward" class="form-label">Phường / Xã</label>
+                            <span asp-validation-for="Input.WardAddress" class="text-danger" aria-required="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               asp-for="Input.IsDefault"
+                               id="default-address-check" />
+                        <label class="form-check-label"
+                               for="default-address-check">
+                            Đặt làm địa chỉ mặc định
+                        </label>
+                    </div>
+                <button class="btn btn-dark w-100 p-3" type="submit">Đặt hàng</button>
+            </form>
+            <form asp-action="Checkout">
+                <input type="hidden" name="addressId" id="input-address-id"/>
+                <button class="btn btn-dark w-100 p-3" type="submit" id="btn-order">Đặt hàng</button>
+            </form>
+        </div>
+        <div class="col-4">
+            <div class="cart-item-list-container">
+                @foreach (var item in Model.CartItems)
+                {
+                    <div class="cart-item justify-content-start">
+                        <img class="cart-item-img"
+                             src="@item.ProductVariantItem.ProductVariant.ImgPath"
+                             alt="" />
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">
+                                @item.ProductVariantItem.ProductVariant.Product.Name
+                            </div>
+                            <div class="text-secondary">@PropertyDisplayHelper.GetTextForColor(item.ProductVariantItem.ProductVariant.Color), @item.ProductVariantItem.Size</div>
+                            <span class="quantity text-secondary">
+                                Số lượng:
+                                <span>@item.Quantity</span>
+                            </span>
+                            <div class="price">@CurrencyFormat.Format(item.Quantity * item.ProductVariantItem.ProductVariant.Product.Price)</div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <br />
+            <div class="d-flex align-items-center">
+                <b class="me-auto">Tổng tiền hàng:</b>
+                <span class="price">@CurrencyFormat.Format(CartController.CalculateSumOfCartTimes(Model.CartItems))</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <b class="me-auto">Phí vận chuyển:</b>
+                <span class="price">@CurrencyFormat.Format(50000)</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <b class="me-auto">Thành tiền:</b>
+                <span class="total price">@CurrencyFormat.Format(CartController.CalculateSumOfCartTimes(Model.CartItems) + 50000)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Container -->
+@section Scripts {
+    <script src="~/js/address.js"></script>
+    <script src="~/js/checkout.js"></script>
+}

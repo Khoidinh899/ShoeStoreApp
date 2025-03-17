@@ -1,0 +1,58 @@
+﻿@using ShoeStoreApp.Utils
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model List<Product>
+
+@{
+    var translator = new VietnameseTranslator();
+}
+
+<main class="pb-3">
+    <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light text-light bg-img" style="background-image: url('/images/home1.jpeg')">
+        <div class="col-md-5 p-lg-5 mx-auto my-5">
+            <h1 class="display-4 fw-normal display-text">SPRING SHOE</h1>
+            <h2 class="display-4 fw-normal display-text">XIN CHÀO!!!</h2>
+            <a class="btn btn-outline-light fs-3" href="/Products">Mua ngay</a>
+        </div>
+    </div>
+    <!-- Start brand Area -->
+    <section class="brand-area section_gap my-5">
+        <div class="container">
+            <div class="row">
+                <a class="col single-img" href="/Products?brand=nike">
+                    <img class="img-fluid d-block mx-auto" src="/images/logo-nike.jpg" alt="">
+                </a>
+                <a class="col single-img" href="/Products?brand=adidas">
+                    <img class="img-fluid d-block mx-auto" src="/images/logo-adidas.png" alt="">
+                </a>
+                <a class="col single-img" href="/Products?brand=puma">
+                    <img class="img-fluid d-block mx-auto" src="/images//logo-puma.png" alt="">
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- End brand Area -->
+
+    <div class="grid w-100 my-md-3 ps-md-3" style="height: 700px">
+        <a href="/Products?category=sneaker" class="text-bg-dark text-center overflow-hidden bg-img d-flex justify-content-center align-items-end" style="background-image: url('/images/home-sneaker.jpg'); border-radius: 12px; grid-row: 1 / 3">
+            <div class="my-3 py-3">
+                <h2 class="display-5 display-text text-dark">Giày sneaker</h2>
+            </div>
+        </a>
+
+        <a href="/Products?category=basketball" class="text-bg-dark text-center overflow-hidden bg-img d-flex justify-content-center align-items-center" style="background-image: url('/images/home-basketball.jpg'); border-radius: 12px; ">
+            <div class="my-3 py-3">
+                <h2 class="display-5 display-text">Giày bóng rổ</h2>
+            </div>
+        </a>
+        <a href="/Products?category=football" class="text-bg-dark text-center overflow-hidden bg-img d-flex justify-content-center align-items-center" style="background-image: url('/images/home-football.jpg'); border-radius: 12px;">
+            <div class="my-3 py-3">
+                <h2 class="display-5 display-text">Giày bóng đá</h2>
+            </div>
+        </a>
+    </div>
+
+
+</main>

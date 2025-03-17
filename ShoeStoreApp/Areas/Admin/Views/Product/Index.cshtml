@@ -1,0 +1,416 @@
+﻿@model ShoeStoreApp.Areas.Admin.Controllers.Combine
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/45f15e8235.js"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/admin-product.css" />
+
+    <title>Order checkout complete!</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="d-flex flex-column flex-shrink-0 bg-light sidebar" style="width: 4.5rem;">
+        <a href="/" class="d-block p-3 link-dark text-decoration-none text-center" title="Spring" data-bs-toggle="tooltip" data-bs-placement="right">
+            <i class="fa-solid fa-leaf"></i>
+            <span class="visually-hidden">Spring</span>
+        </a>
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li>
+                <a asp-controller="Dashboard" class="nav-link py-3 border-bottom rounded-0" title="Dashboard" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-house-door"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Order" class="nav-link py-3 border-bottom rounded-0" title="Orders" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-file-text"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Product" class="nav-link active py-3 border-bottom rounded-0" title="Products" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-cart"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Customer" class="nav-link py-3 border-bottom rounded-0" title="Customers" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-person"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="text-center">
+            <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark p-0 m-auto">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Sản phẩm</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group me-2">
+                    <form asp-controller="Product" asp-action="ExportToExcel" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Export</button>
+                    </form>
+                </div>
+                <div class="btn-group me-2">
+                    <form asp-controller="Product" asp-action="ImportToExcel" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Import</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex nav-option mb-3">
+            <form asp-action="Index" method="get" class="d-flex w-100">
+                <input type="text"
+                       name="SearchString"
+                       value="@ViewData["CurrentFilter"]"
+                   id=""
+                   class="form-control w-100"
+                   placeholder="Tìm kiếm theo tên mặt hàng" />
+            <button type="submit" class="btn btn-dark" id="btn-search">Tìm kiếm</button>
+            </form>
+
+            <button class="btn btn-outline-dark"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add-product-modal">
+                Thêm sản phẩm
+            </button>
+            <form asp-action="DeleteProducts" method="post" id="formDeleteProducts">
+                <input type="hidden" name="productSelectedIds" id="productSelectedIds" />
+                <button type="submit" id="deleteButton" class="btn btn-dark h-100">Xóa sản phẩm</button>
+            </form>
+        </div>
+        <table class="table table-hover w-100 align-middle">
+            <colgroup>
+                <col span="1" style="width: 0%; min-width: 40px" />
+                <col span="1" style="width: 0%; min-width: 100px" />
+                <col span="1" style="width: 0%; min-width: 300px" />
+                <col span="1" style="width: 0%; min-width: 100px" />
+                <col span="1" style="width: 0%; min-width: 140px" />
+                <col span="1" style="width: 100%" />
+                <col span="1" style="width: 0%; min-width: 130px" />
+                <col span="1" style="width: 0%; min-width: 200px" />
+                <col span="1" style="width: 0%; min-width: 100px" />
+            </colgroup>
+            <thead class="text-uppercase">
+            <th></th>
+            <th>Id</th>
+            <th>Tên</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BrandSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Hãng &ensp;<i class="fa-solid fa-sort ms-auto"></i></a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Giá &ensp;<i class="fa-solid fa-sort"></i></a>
+            </th>
+            <th>Mô tả</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GenderSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Giới tính &ensp;<i class="fa-solid fa-sort"></i></a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CategorySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Phân loại &ensp;<i class="fa-solid fa-sort"></i></a>
+            </th>
+            <th></th>
+            </thead>
+            <tbody class="table-group-divider">
+                @foreach (var product in Model.PaginatedListProduct)
+                {
+                    <tr>
+                        <td>
+                            <input class="form-check-input" type="checkbox" />
+                        </td>
+                        <td>@product.Id</td>
+                        <td>@product.Name</td>
+                        <td>@product.Brand</td>
+                        <td>@product.Price.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                        <td class="text-truncate" style="max-width: 1px">
+                            @product.Description
+                        </td>
+                        <td>@product.Gender</td>
+                        <td>@product.Category</td>
+                        <td>
+                            <a class="btn-edit me-3" asp-action="Edit" asp-route-id="@product.Id"
+                           style="text-decoration: none;">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form asp-action="DeleteProduct" class="d-inline-block" asp-route-id="@product.Id" method="post">
+                                <a onclick="this.parentNode.submit();return false;" class="btn-delete" type="submit">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @{
+            var prevDisabled = !Model.PaginatedListProduct.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.PaginatedListProduct.HasNextPage ? "disabled" : "";
+        }
+
+        <nav class="d-flex">
+            <div class="info text-secondary me-auto">
+                Hiển thị @(Model.PaginatedListProduct.PageIndex) - @(Model.PaginatedListProduct.PageIndex * 10) của
+                @(Model.Products.Count) sản phẩm
+            </div>
+            <ul class="pagination">
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PaginatedListProduct.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="page-link @prevDisabled">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PaginatedListProduct.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="page-link @nextDisabled">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </main>
+
+    <!-- add product modal -->
+    <div id="add-product-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm sản phẩm mới</h5>
+                </div>
+                <div class="modal-body">
+                    <form class="row gx-1" asp-action="AddProduct" method="post" enctype="multipart/form-data">
+                        <div class="mb-3 form-floating col-8">
+                            <input asp-for="Product.Name"
+                                   class="form-control"
+                                   id="product-name"
+                                   required
+                                   placeholder="" />
+                            <label asp-for="Product.Name" class="form-label">Tên sản phẩm</label>
+                            <span asp-validation-for="Product.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-floating col-4">
+                            <input type="number"
+                                   asp-for="Product.Price"
+                                   class="form-control"
+                                   id="product-price"
+                                   required
+                                   placeholder="" />
+                            <label asp-for="Product.Price" class="form-label">Giá</label>
+                            <span asp-validation-for="Product.Price" class="text-danger"></span>
+
+                        </div>
+                        <div class="mb-3 form-floating col-12">
+                            <input type="text"
+                                   asp-for="Product.Description"
+                                   class="form-control"
+                                   id="product-description"
+                                   required
+                                   placeholder="" />
+                            <label asp-for="Product.Description"
+                                   class="form-label">Mô tả</label>
+                            <span asp-validation-for="Product.Description" class="text-danger"></span>
+
+                        </div>
+                        <div class="mb-3 form-floating col-4">
+                            <select class="form-select" id="product-brand" required
+                                    asp-for="Product.Brand">
+                                <option value="" selected>Chọn hãng</option>
+                                <option value="nike">Nike</option>
+                                <option value="adidas">Adidas</option>
+                                <option value="puma">Puma</option>
+                            </select>
+                            <label asp-for="Product.Brand" class="form-label">Hãng</label>
+                            <span asp-validation-for="Product.Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 col-4 form-floating">
+                            <select class="form-select" id="product-gender" required
+                                    asp-for="Product.Gender">
+                                <option value="" selected>Chọn giới tính</option>
+                                <option value="men">Nam</option>
+                                <option value="women">Nữ</option>
+                                <option value="unisex">Unisex</option>
+                            </select>
+                            <label asp-for="Product.Gender" class="form-label">Giới tính</label>
+                            <span asp-validation-for="Product.Gender" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-4 form-floating">
+                            <select class="form-select"
+                                    id="product-category"
+                                    required
+                                    asp-for="Product.Category">
+                                <option value="" selected>Chọn phân loại</option>
+                                <option value="sneaker">
+                                    Giày sneaker
+                                </option>
+                                <option value="basketball">
+                                    Giày bóng rổ
+                                </option>
+                                <option value="football">
+                                    Giày bóng đá
+                                </option>
+                            </select>
+                            <label asp-for="Product.Category" class="form-label">Phân loại</label>
+                            <span asp-validation-for="Product.Category" class="text-danger"></span>
+                        </div>
+                        <div>
+                            <span class="fs-5 me-4">Biến thể màu</span>
+                            <span id="btn-add-variant"
+                                  class="btn-icon text-secondary fs-6"><i class="fa-solid fa-plus"></i> Thêm</span>
+                        </div>
+                        <div class="variant-container">
+                            <div class="variant-item border rounded border-1 px-3 py-2 mb-2">
+                                <input type="hidden" class="color-input" name="color" />
+                                <div class="variant-title">
+                                    Biến thể 1 (mặc định)
+                                </div>
+                                <div class="variant-color-container container-fluid row">
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="black"
+                                               id="color-black" />
+                                        <label class="form-check-label"
+                                               for="color-black">
+                                            Đen
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="white"
+                                               id="color-white" />
+                                        <label class="form-check-label"
+                                               for="color-white">
+                                            Trắng
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="blue"
+                                               id="color-blue" />
+                                        <label class="form-check-label"
+                                               for="color-blue">
+                                            Xanh dương
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="green"
+                                               id="color-green" />
+                                        <label class="form-check-label"
+                                               for="color-green">
+                                            Xanh lục
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="pink"
+                                               id="color-pink" />
+                                        <label class="form-check-label"
+                                               for="color-pink">
+                                            Hồng
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="red"
+                                               id="color-red" />
+                                        <label class="form-check-label"
+                                               for="color-red">
+                                            Đỏ
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="orange"
+                                               id="color-orange" />
+                                        <label class="form-check-label"
+                                               for="color-orange">
+                                            Cam
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="gray"
+                                               id="color-gray" />
+                                        <label class="form-check-label"
+                                               for="color-gray">
+                                            Xám
+                                        </label>
+                                    </div>
+                                    <div class="form-check col-4">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="yellow"
+                                               id="color-yellow" />
+                                        <label class="form-check-label"
+                                               for="color-yellow">
+                                            Vàng
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label for="variant-img"
+                                           class="form-label">Ảnh minh họa</label>
+                                    <input name="file" class="form-control"
+                                           type="file"
+                                           required
+                                           id="variant-img" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="link-dark" data-bs-dismiss="modal">Hủy</a>
+                            <button type="submit" class="btn btn-dark">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+<script src="~/js/admin-product.js"></script>
+
+</html>
+
+

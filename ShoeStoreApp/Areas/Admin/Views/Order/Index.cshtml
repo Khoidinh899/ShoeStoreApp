@@ -1,0 +1,245 @@
+﻿@{
+    ViewData["Title"] = "Order";
+}
+@model ShoeStoreApp.Areas.Admin.Controllers.OrderCombine
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/45f15e8235.js"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/admin-order.css" />
+    <title>Order checkout complete!</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="d-flex flex-column flex-shrink-0 bg-light sidebar" style="width: 4.5rem;">
+        <a href="/" class="d-block p-3 link-dark text-decoration-none text-center" title="Spring" data-bs-toggle="tooltip" data-bs-placement="right">
+            <i class="fa-solid fa-leaf"></i>
+            <span class="visually-hidden">Spring</span>
+        </a>
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li>
+                <a asp-controller="Dashboard" class="nav-link py-3 border-bottom rounded-0" title="Dashboard" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-house-door"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Order" class="nav-link active py-3 border-bottom rounded-0" title="Orders" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-file-text"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Product" class="nav-link py-3 border-bottom rounded-0" title="Products" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-cart"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Customer" class="nav-link py-3 border-bottom rounded-0" title="Customers" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-person"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="text-center">
+            <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark p-0 m-auto">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Đơn hàng</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group me-2">
+                    <form asp-controller="Order" asp-action="ExportToExcel" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Export</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex nav-option mb-3">
+            <form asp-action="Index" method="get" class="d-flex w-100">
+                <input type="text"
+                       name="SearchString"
+                       value="@ViewData["CurrentFilter"]"
+                       id=""
+                       class="form-control w-100"
+                       placeholder="Tìm kiếm theo tên khách hàng, địa chỉ, ngày tạo" />
+                <button type="submit" class="btn btn-dark" id="btn-search">Tìm kiếm</button>
+            </form>
+            <form asp-action="OrderSuccess" method="post" id="formOrderSuccess">
+                <input type="hidden" name="orderSelectedIdSuccess" id="orderSelectedIdSuccess" />
+                <button class="btn btn-success h-100" type="submit" id="btnSuccess">
+                    Hoàn thành đơn
+                </button>
+            </form>
+            <form asp-action="OrderPending" method="post" id="formOrderPending">
+                <input type="hidden" name="orderSelectedIdPending" id="orderSelectedIdPending" />
+                <button class="btn btn-primary h-100" type="submit" id="btnPending">
+                    Xác nhận đơn
+                </button>
+            </form>
+            <form asp-action="OrderCancelled" method="post" id="formOrderCancelled">
+                <input type="hidden" name="orderSelectedIdCancelled" id="orderSelectedIdCancelled" />
+                <button class="btn btn-danger h-100" type="submit" id="btnCancelled">
+                    Hủy đơn
+                </button>
+            </form>
+        </div>
+        <table class="table table-hover w-100 align-middle">
+            <colgroup>
+                <col span="1" style="width: 0%; min-width: 40px" />
+                <col span="1" style="width: 0%; min-width: 40px" />
+                <col span="1" style="width: 0%; min-width: 180px" />
+                <col span="1" style="width: 0%; min-width: 200px" />
+                <col span="1" style="width: 100%" />
+                <col span="1" style="width: 0%; min-width: 140px" />
+                <col span="1" style="width: 0%; min-width: 200px" />
+                <col span="1" style="width: 0%; min-width: 350px" />
+                <col span="1" style="width: 0%; min-width: 40px" />
+            </colgroup>
+
+            <thead class="text-uppercase">
+            <th></th>
+            <th>Id</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Trạng thái &ensp;<i class="fa-solid fa-sort ms-auto"></i></a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameCustomerSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Tên khách hàng &ensp;<i class="fa-solid fa-sort ms-auto"></i></a>
+            </th>
+            <th>Địa chỉ giao</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TotalSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Tổng tiền &ensp;<i class="fa-solid fa-sort ms-auto"></i></a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ngày tạo &ensp;<i class="fa-solid fa-sort ms-auto"></i></a>
+            </th>
+            <th>Sản phẩm</th>
+            <th></th>
+            </thead>
+            <tbody class="table-group-divider">
+                @foreach (Order order in Model.PaginatedListOrder)
+                {
+                    <tr>
+                        <td>
+                            <input class="form-check-input" type="checkbox" />
+                        </td>
+                        <td>@order.Id</td>
+                        @if (order.Status == OrderStatusCode.SUCCESS)
+                        {
+                            <td><div class="status status-done">ĐÃ HOÀN THÀNH</div></td>
+                        }
+                        else if (order.Status == OrderStatusCode.PENDING)
+                        {
+                            <td><div class="status status-pending">CHỜ XÁC NHẬN</div></td>
+                        }
+                        else if (order.Status == OrderStatusCode.DELIVERING)
+                        {
+                            <td><div class="status status-delivering">ĐANG VẬN CHUYỂN</div></td>
+                        }
+                        else
+                        {
+                            <td><div class="status status-cancelled">ĐÃ HỦY</div></td>
+                        }
+                        <td>@order.DeliveryAddress.Name</td>
+                        <td class="text-truncate" style="max-width: 1px">
+                            @order.DeliveryAddress.Address
+                        </td>
+                        <td> @order.Total.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                        <td>
+                            @order.TimeCreated
+                        </td>
+                        <td>
+                            @{
+                                Dictionary<int, List<OrderItem>> dictionaryOrderItem = Model.DictionaryOrderItem;
+                                List<OrderItem> orderItems = dictionaryOrderItem[order.Id];
+                            }
+
+                            @foreach (OrderItem orderItem in orderItems)
+                            {
+                                <span>
+                                    x @orderItem.Quantity
+                                    @orderItem.ProductVariantItem.ProductVariant.Product.Name
+                                    - @orderItem.ProductVariantItem.ProductVariant.Color
+                                    - @orderItem.ProductVariantItem.Size
+                                </span>
+                                <br>
+                            }
+
+                        </td>
+                        <td>
+                            <form asp-action="DeleteOrder" class="d-inline-block" asp-route-id="@order.Id" method="post">
+                                <a onclick="this.parentNode.submit();return false;" class="btn-delete" type="submit">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @{
+            var prevDisabled = !Model.PaginatedListOrder.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.PaginatedListOrder.HasNextPage ? "disabled" : "";
+            var numberOrder = Model.TotalOrder;
+
+        }
+        <nav class="d-flex">
+            <div class="info text-secondary me-auto">
+                Hiển thị @(Model.PaginatedListOrder.PageIndex) - @(Model.PaginatedListOrder.PageIndex * 10) của
+                @numberOrder hóa đơn
+            </div>
+            <ul class="pagination">
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PaginatedListOrder.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="page-link @prevDisabled">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PaginatedListOrder.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="page-link @nextDisabled">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </main>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+<script src="~/js/admin-order.js"></script>
+</html>
+
+

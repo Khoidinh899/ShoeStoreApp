@@ -1,0 +1,34 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Xác nhận đăng ký";
+}
+
+@section Styles {
+    <link href="@Url.Content("~/css/login.css")" rel="stylesheet" type="text/css" />
+}
+
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+<p>
+    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+</p>
+    }
+    else
+    {
+        <div class="main-container container pt-3 h-100">
+            <div class="mb-3 auth-form-container align-items-center justify-content-center d-flex flex-column">
+                <i class="fa-regular fa-circle-check mb-3"
+                   style="font-size: 100px"></i>
+                <h2 class="mb-3">Đăng ký thành công !</h2>
+                <p>
+                    Vui lòng kiểm tra email của bạn xác thực tài khoản.
+                </p>
+            </div>
+        </div>
+
+    }
+}
+

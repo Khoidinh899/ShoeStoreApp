@@ -1,0 +1,66 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+@section Styles {
+    <link href="@Url.Content("~/css/login.css")" rel="stylesheet" type="text/css" />
+}
+
+<!-- Main Container -->
+<div class="main-container container pt-3 h-100">
+    <form class="mb-3 auth-form-container" id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <h2>Đăng ký</h2>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3 form-floating">
+            <input type="email"
+                   class="form-control"
+                   id="email"
+                   asp-for="Input.Email"
+                   aria-required="true"
+                   placeholder="Vui lòng nhập email của bạn" />
+            <label asp-for="Input.Email" class="form-label">Email</label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3 form-floating">
+            <input type="password"
+                   class="form-control"
+                   id="password"
+                   asp-for="Input.Password"
+                   aria-required="true"
+                   placeholder="Vui lòng nhập mật khẩu" />
+            <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <div class="mb-3 form-floating">
+            <input type="password"
+                   class="form-control"
+                   id="password-confirm"
+                   asp-for="Input.ConfirmPassword"
+                   aria-required="true"
+                   placeholder="Xác nhận mật khẩu" />
+            <label asp-for="Input.ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+        <button class="btn btn-dark p-3 mb-3 w-100" id="registerSubmit" type="submit">Đăng ký</button>
+        <div class="text-secondary">
+            Đã có tài khoản ?
+            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl"
+               class="link-primary link-underline link-underline-opacity-0" >Đăng nhập</a>
+        </div>
+        <div class="mt-5">
+            <a href="/"
+               class="link-dark link-underline link-underline-opacity-0">
+                <i class="fa-solid fa-chevron-left"></i> Quay về trang
+                chủ
+            </a>
+        </div>
+    </form>
+    <!-- List container -->
+</div>
+<!-- Main Container -->
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

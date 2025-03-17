@@ -1,0 +1,20 @@
+#btn-add-variant:hover {
+    cursor: pointer;
+    color: black !important;
+}
+
+.variant-item {
+    position: relative;
+}
+
+.variant-item .btn-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: gray;
+}
+
+.btn-icon:hover {
+    cursor: pointer;
+    color: black !important;
+}

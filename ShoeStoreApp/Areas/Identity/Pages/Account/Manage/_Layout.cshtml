@@ -1,0 +1,33 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+@section Styles {
+    <link href="@Url.Content("~/css/profile.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/css/order.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="main-container container pt-3 h-100">
+    <h2>Quản lý tài khoản</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

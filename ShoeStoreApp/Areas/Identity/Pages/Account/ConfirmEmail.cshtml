@@ -1,0 +1,30 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+@section Styles {
+    <link href="@Url.Content("~/css/login.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="main-container container pt-3 h-100">
+    <div class="mb-3 auth-form-container align-items-center justify-content-center d-flex flex-column">
+        <i class="fa-regular fa-circle-check mb-3"
+           style="font-size: 100px"></i>
+        <h2 class="mb-3">Xác thực tài khoản thành công !</h2>
+        <p>
+            Tài khoản của bạn đã được xác thực. Cảm ơn bạn đã đăng ký !
+        </p>
+        <div class="mt-5">
+            <a href="/"
+               class="link-dark link-underline link-underline-opacity-0">
+                <i class="fa-solid fa-chevron-left"></i> Quay về trang
+                chủ
+            </a>
+        </div>
+    </div>
+
+</div>
+

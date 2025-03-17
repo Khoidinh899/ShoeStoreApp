@@ -1,0 +1,377 @@
+﻿
+@{
+    ViewData["Title"] = "ProductEdit";
+}
+@model ShoeStoreApp.Areas.Admin.Controllers.CombineEditProduct
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/45f15e8235.js"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/admin-product.css" />
+    <title>Order checkout complete!</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="d-flex flex-column flex-shrink-0 bg-light sidebar" style="width: 4.5rem;">
+        <a href="/" class="d-block p-3 link-dark text-decoration-none text-center" title="Spring" data-bs-toggle="tooltip" data-bs-placement="right">
+            <i class="fa-solid fa-leaf"></i>
+            <span class="visually-hidden">Spring</span>
+        </a>
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li>
+                <a href="/Admin" class="nav-link py-3 border-bottom rounded-0" title="Dashboard" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-house-door"></i>
+                </a>
+            </li>
+            <li>
+                <a href="/Admin/Order" class="nav-link py-3 border-bottom rounded-0" title="Orders" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-file-text"></i>
+                </a>
+            </li>
+            <li>
+                <a href="/Admin/Product"  class="nav-link active py-3 border-bottom rounded-0" title="Products" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-cart"></i>
+                </a>
+            </li>
+            <li>
+                <a href="/Admin/Customer" class="nav-link py-3 border-bottom rounded-0" title="Customers" data-bs-toggle="tooltip" data-bs-placement="right">
+                    <i class="bi bi-person"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="text-center">
+            <form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark p-0 m-auto">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- Main -->
+    <main class="px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Chỉnh sửa sản phẩm</h1>
+        </div>
+        <div>
+            <form class="row gx-1" asp-action="PostEditProduct"
+                  asp-route-id="@Model.Product.Id" 
+                 enctype="multipart/form-data">
+                <div class="mb-3 form-floating col-8">
+                    <input 
+                        required
+                        asp-for="Product.Name"
+                        class="form-control"
+                        id="product-name"
+                        value="@Model.Product.Name"
+                        placeholder="" />
+                    <label for="profile-name" class="form-label">Tên sản phẩm</label>
+                </div>
+                <div class="mb-3 form-floating col-4">
+                    <input 
+                        required
+                        asp-for="Product.Price"
+                        type="number"
+                        class="form-control"
+                        id="product-price"
+                        value="@Model.Product.Price"
+                        placeholder="" />
+                    <label for="product-price" class="form-label">Giá</label>
+                </div>
+                <div class="mb-3 form-floating col-12">
+                    <input 
+                        required
+                        asp-for="Product.Description"
+                        type="text"
+                        class="form-control"
+                        id="product-description"
+                        value="@Model.Product.Description"
+                        placeholder="" />
+                    <label for="product-description"
+                           class="form-label">Mô tả</label>
+                </div>
+                <div class="mb-3 form-floating col-4">
+                    @if (Model.Product.Brand.Equals("nike"))
+                    {
+                        <select class="form-select" 
+                            id="product-brand" 
+                            asp-for="Product.Brand" 
+                            required>
+                            <option selected value="nike">Nike</option>
+                            <option value="adidas">Adidas</option>
+                            <option value="puma">Puma</option>
+                        </select>
+                    }
+                    else if (Model.Product.Brand.Equals("adidas"))
+                    {
+                        <select class="form-select" 
+                            id="product-brand"
+                            asp-for="Product.Brand"
+                            required>
+                            <option value="nike">Nike</option>
+                            <option selected value="adidas">Adidas</option>
+                            <option value="puma">Puma</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <select class="form-select" 
+                            id="product-brand"
+                            asp-for="Product.Brand"
+                            required>
+                            <option value="nike">Nike</option>
+                            <option value="adidas">Adidas</option>
+                            <option selected value="puma">Puma</option>
+                        </select>
+                    }
+                    <label for="product-brand" class="form-label">Hãng</label>
+                </div>
+                <div class="mb-3 col-4 form-floating">
+                    @if (Model.Product.Gender.Equals("men"))
+                    {
+                        <select class="form-select" 
+                            id="product-gender"
+                            required
+                            asp-for="Product.Gender">
+                            <option selected value="men">Nam</option>
+                            <option value="women">Nữ</option>
+                            <option value="unisex">Unisex</option>
+                        </select>
+                        <label for="select-city" class="form-label">Giới tính</label>
+                    } else if (Model.Product.Gender == "women")
+                    {
+                        <select class="form-select" 
+                            id="product-gender"
+                            required
+                            asp-for="Product.Gender">
+                            <option value="men">Nam</option>
+                            <option selected value="women">Nữ</option>
+                            <option value="unisex">Unisex</option>
+                        </select>
+                        <label for="select-city" class="form-label">Giới tính</label>
+                    }
+                    else
+                    {
+                        <select class="form-select" 
+                            id="product-gender"
+                            required
+                            asp-for="Product.Gender">
+                            <option value="men">Nam</option>
+                            <option value="women">Nữ</option>
+                            <option selected value="unisex">Unisex</option>
+                        </select>
+                        <label for="select-city" class="form-label">Giới tính</label>
+                    }
+                </div>
+                <div class="mb-3 col-4 form-floating">
+                    @if (Model.Product.Category.Equals("sneaker"))
+                    {
+                        <select class="form-select" 
+                            id="product-category"
+                            required
+                            asp-for="Product.Category">
+                            <option selected value="sneaker"> Giày sneaker </option>
+                            <option value="basketball"> Giày bóng rổ </option>
+                            <option value="football"> Giày bóng đá </option>
+                        </select>
+                        <label for="product-category" class="form-label">Phân loại</label>
+                    }
+                    else if (Model.Product.Category.Equals("basketball"))
+                    {
+                        <select class="form-select" 
+                            id="product-category"
+                            required
+                            asp-for="Product.Category">
+                            <option value="sneaker"> Giày sneaker </option>
+                            <option selected value="basketball"> Giày bóng rổ </option>
+                            <option value="football"> Giày bóng đá </option>
+                        </select>
+                        <label for="product-category" class="form-label">Phân loại</label>
+                    }
+                    else
+                    {
+                        <select class="form-select" 
+                            id="product-category"
+                            required
+                            asp-for="Product.Category">
+                            <option value="sneaker"> Giày sneaker </option>
+                            <option value="basketball"> Giày bóng rổ </option>
+                            <option selected value="football"> Giày bóng đá </option>
+                        </select>
+                        <label for="product-category" class="form-label">Phân loại</label>
+                    }
+                </div>
+                <div>
+                    <span class="fs-5 me-4">Biến thể màu</span>
+                </div>
+                <input type="hidden" value="" id="saveProductEditImage" name="saveProductEditImage" />
+                <div class="variant-container">
+                    @{
+                        int count = 0;
+                    }
+                    @foreach(ProductVariant productVariant in Model.ProductVariants)
+                    {
+                        <div class="variant-item border rounded border-1 px-3 py-2 mb-2">
+                            <div class="variant-title">
+                                Biến thể @(count+1)
+                            </div>
+                            <div class="variant-color-container container-fluid row">
+                                <input type="hidden" value="@productVariant.Color" id="variantColor-@(count+1)" name="color">
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="black"
+                                       id="color-black" />
+                                    <label class="form-check-label"
+                                       for="color-black">
+                                        Đen
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="white"
+                                       id="color-white" />
+                                    <label class="form-check-label"
+                                       for="color-white">
+                                        Trắng
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="blue"
+                                       id="color-blue" />
+                                    <label class="form-check-label"
+                                       for="color-blue">
+                                        Xanh dương
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="green"
+                                       id="color-green" />
+                                    <label class="form-check-label"
+                                       for="color-green">
+                                        Xanh lục
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="pink"
+                                       id="color-pink" />
+                                    <label class="form-check-label"
+                                       for="color-pink">
+                                        Hồng
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="red"
+                                       id="color-red" />
+                                    <label class="form-check-label"
+                                       for="color-red">
+                                        Đỏ
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="orange"
+                                       id="color-orange" />
+                                    <label class="form-check-label"
+                                       for="color-orange">
+                                        Cam
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input form-check-input-@(count+1)"
+                                       type="checkbox"
+                                       value="gray"
+                                       id="color-gray" />
+                                    <label class="form-check-label"
+                                       for="color-gray">
+                                        Xám
+                                    </label>
+                                </div>
+                                <div class="form-check col-4">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           value="yellow"
+                                           id="color-yellow" />
+                                    <label class="form-check-label"
+                                           for="color-yellow">
+                                        Vàng
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label for="variant-img"
+                                   class="form-label">Ảnh minh họa</label>
+                                <input class="form-control variant-img"
+                                   name="file"
+                                   type="file"
+                                   value="@productVariant.ImgPath"
+                                   id="variant-img-@(count+1)"/>
+                            </div>
+                            <div class="container mt-3">
+                                <div class="row">
+                                    <div class="col-4 text-center">
+                                        <img class="img-fluid mx-auto" src="@productVariant.ImgPath" style="width:300px; height:auto" />
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <div class="row mx-auto">
+                                            <input type="hidden" id="variantSizeForColor-@(count+1)" name="size">
+                                            @foreach (ProductVariantItem productVariantItem in productVariant.Items)
+                                            {
+                                                <div class="col-6">
+                                                    <div class="input-group mb-2">
+                                                        <span class="input-group-text" id="basic-addon1">@productVariantItem.Size</span>
+                                                        <input type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1"
+                                                        value="@productVariantItem.StockQuantity"
+                                                        id="variantSizeForColor-@(count+1)-@productVariantItem.Size">
+                                                    </div>
+                                                </div> 
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        count++; 
+                    }
+                    <input type="hidden" id="numberVariant" value="@count" />
+                </div>
+                <button id="btn-edit-product" type="submit" class="btn btn-dark">Lưu</button>
+            </form>
+        </div>
+    </main>
+    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+<script src="~/js/admin-edit-product.js"></script>
+</html>
+

@@ -1,0 +1,70 @@
+﻿@using ShoeStoreApp.Controllers
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+@model List<CartItem>
+
+@{
+    var translator = new VietnameseTranslator();
+}
+
+
+@section Styles {
+    <link href="@Url.Content("~/css/cart.css")" rel="stylesheet" type="text/css" />
+}
+<!-- Main Container -->
+<div class="main-container container pt-3 h-100">
+    <div class="row">
+        <div class="col-8">
+            <h2>Giỏ hàng của bạn</h2>
+            <p>Bạn đang có <b>@Model.Count sản phẩm</b> trong giỏ hàng.</p>
+            <div class="cart-item-list-container">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item" data-itemid="@item.ProductVariantItemId">
+                        <img class="cart-item-img" src="@item.ProductVariantItem.ProductVariant.ImgPath" alt="">
+                        <div class="cart-item-info me-auto">
+                            <a class="cart-item-title" href="/Products/Details/@item.ProductVariantItem.ProductVariant.Product.Id">@item.ProductVariantItem.ProductVariant.Product.Name</a>
+                            <div class="text-secondary">@PropertyDisplayHelper.GetTextForColor(item.ProductVariantItem.ProductVariant.Color), @item.ProductVariantItem.Size</div>
+                            <div class="price">@CurrencyFormat.Format(item.ProductVariantItem.ProductVariant.Product.Price)</div>
+                        </div>
+                        <div class="cart-item-quantity me-5">
+                            <form asp-action="DecrementQuantity" class="d-inline-block">
+                                <input type="hidden" name="itemId" value="@item.Id"/>
+                                <button class="btn-quantity" type="submit"><i class="fa-solid fa-square-minus minus" style="color: #0f2f25;"></i></button>
+                            </form>
+                            <span class="quantity">@item.Quantity</span>
+                            <form asp-action="IncrementQuantity" class="d-inline-block">
+                                <input type="hidden" name="itemId" value="@item.Id"/>
+                                <button class="btn-quantity" type="submit"><i class="fa-solid fa-square-plus plus"></i></button>
+                            </form>
+                        </div>
+                        <div class="cart-item-subtotal me-3">
+                            <b class="price">@CurrencyFormat.Format(item.Quantity * item.ProductVariantItem.ProductVariant.Product.Price)</b>
+                        </div>
+                        <form class="remove" asp-action="RemoveCartItem">
+                            <input type="hidden" name="itemId" value="@item.Id" />
+                            <button class="btn-quantity" type="submit"><i class="fa-solid fa-xmark"></i></button>
+                        </form>
+                    </div>
+
+                }
+            </div>
+        </div>
+        <div class="col-4">
+            <h2>Thông tin đơn hàng</h2>
+            <hr>
+            <div class="d-flex align-items-center">
+                <b class="me-auto">Tổng tiền:</b>
+                <span id="total" class="total price">@CurrencyFormat.Format(CartController.CalculateSumOfCartTimes(Model))</span>
+            </div>
+            <hr>
+            <a href="/Checkout">
+                <div class="btn btn-dark w-100 p-3">Thanh toán</div>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- Main Container -->

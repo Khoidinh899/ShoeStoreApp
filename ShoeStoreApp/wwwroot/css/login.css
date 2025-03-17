@@ -1,0 +1,9 @@
+.auth-form-container {
+    width: 500px;
+    padding-top: 100px;
+    margin: auto;
+}
+
+.auth-form-container label {
+    color: rgb(108,117,125);
+}

@@ -1,0 +1,13 @@
+﻿using ShoeStoreApp.Interface;
+using ShoeStoreApp.Models;
+
+namespace ShoeStoreApp.SortStrategies
+{
+	public class SortByGenderDesc : ISortStrategy
+	{
+		public IQueryable<Product> Sort(IQueryable<Product> items)
+		{
+			return items.OrderByDescending(s => s.Gender);
+		}
+	}
+}

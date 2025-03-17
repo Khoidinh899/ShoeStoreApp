@@ -1,0 +1,38 @@
+﻿@using ShoeStoreApp.Controllers
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+@model string
+
+@{
+    var translator = new VietnameseTranslator();
+}
+
+
+@section Styles {
+    <link href="@Url.Content("~/css/address.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/css/cart.css")" rel="stylesheet" type="text/css" />
+}
+<!-- Main Container -->
+<div class="main-container container pt-3 align-items-center justify-content-center d-flex flex-column">
+    <i class="fa-regular fa-circle-xmark mb-3"
+       style="font-size: 100px"></i>
+    <h1>Đặt mua thất bại!</h1>
+    <p>Đơn hàng của bạn chứa sản phẩm có số lượng lớn hơn số lượng trong kho. Vui lòng giảm số lượng đặt mua. Nhấn <a href="/Cart">vào đây</a> để quay lại giỏ hàng</p>
+    <p>Sản phẩm bị thất bại: @TempData["FailedCartItem"]</p>
+    <div class="mt-5">
+        <a href="/"
+           class="link-dark link-underline link-underline-opacity-0">
+            <i class="fa-solid fa-chevron-left"></i> Quay về trang
+            chủ
+        </a>
+    </div>
+    <br /><br />
+</div>
+<!-- Main Container -->
+@section Scripts {
+    <script src="~/js/address.js"></script>
+    <script src="~/js/checkout.js"></script>
+}
